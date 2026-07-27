@@ -21,6 +21,9 @@ const dynamicIsland = document.querySelector('#dynamicIsland');
 const tinyPhoto = document.querySelector('#tinyPhoto');
 const islandTitle = document.querySelector('#islandTitle');
 const islandMeta = document.querySelector('#islandMeta');
+const islandPreviewCanvas = document.querySelector('#islandPreviewCanvas');
+const islandPreviewFilm = document.querySelector('#islandPreviewFilm');
+const islandPreviewFocal = document.querySelector('#islandPreviewFocal');
 const developIslandThumb = document.querySelector('#developIslandThumb');
 const developIslandTitle = document.querySelector('#developIslandTitle');
 const developIslandMeta = document.querySelector('#developIslandMeta');
@@ -55,6 +58,14 @@ let developFrame = null;
 let lastFrameTime = 0;
 let rubbing = false;
 let exposure = 0;
+let currentFocal = 1;
+let currentZoom = 1.15;
+let zoomSettleTimer = null;
+let islandPreviewFrame = null;
+let islandPointerId = null;
+let islandStartY = 0;
+let islandDragDistance = 0;
+let islandWasExpanded = false;
 let gallery = loadGallery();
 
 stage.dataset.film = currentFilm;
@@ -124,8 +135,95 @@ function selectFilm(film) {
   previewCanvas.style.filter = filterCss(film);
   document.querySelectorAll('.film-chip').forEach((chip) => chip.classList.toggle('active', chip.dataset.film === film));
   recommendation.textContent = films[film].recommendation;
+  islandPreviewFilm.textContent = films[film].name;
+  islandPreviewCanvas.style.filter = filterCss(film);
   const chip = document.querySelector(`.film-chip[data-film="${film}"]`);
   chip?.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+}
+
+function setFocal(value) {
+  const focalScales = { 0.5: 1, 1: 1.15, 2: 1.66, 3: 2.28 };
+  const nextFocal = Number(value);
+  const targetZoom = focalScales[nextFocal] || focalScales[1];
+  const direction = targetZoom >= currentZoom ? 1 : -1;
+  currentFocal = nextFocal;
+  currentZoom = targetZoom;
+  clearTimeout(zoomSettleTimer);
+  stage.style.setProperty('--zoom-scale', String(targetZoom * (direction > 0 ? 1.035 : .985)));
+  zoomSettleTimer = setTimeout(() => stage.style.setProperty('--zoom-scale', String(targetZoom)), 430);
+  document.querySelectorAll('[data-focal]').forEach((button) => button.classList.toggle('active', Number(button.dataset.focal) === nextFocal));
+  islandPreviewFocal.textContent = `${nextFocal}×`;
+}
+
+function renderIslandPreview() {
+  if (!dynamicIsland.classList.contains('expanded')) return;
+  const width = 636;
+  const height = 352;
+  if (islandPreviewCanvas.width !== width) islandPreviewCanvas.width = width;
+  if (islandPreviewCanvas.height !== height) islandPreviewCanvas.height = height;
+  const ctx = islandPreviewCanvas.getContext('2d');
+  ctx.clearRect(0, 0, width, height);
+  ctx.save();
+  ctx.translate(width / 2, height / 2);
+  ctx.scale(currentZoom, currentZoom);
+  ctx.translate(-width / 2, -height / 2);
+  if (uploadedImage) drawCover(ctx, uploadedImage, uploadedImage.naturalWidth, uploadedImage.naturalHeight, width, height);
+  else if (stream && video.videoWidth) drawCover(ctx, video, video.videoWidth, video.videoHeight, width, height, facingMode === 'user');
+  else drawDemo(ctx, width, height);
+  ctx.restore();
+  islandPreviewFrame = requestAnimationFrame(renderIslandPreview);
+}
+
+function openIslandPreview() {
+  if (developing || dynamicIsland.classList.contains('working')) return;
+  dynamicIsland.classList.add('expanded');
+  stage.classList.add('island-open');
+  dynamicIsland.classList.remove('dragging');
+  dynamicIsland.style.width = '';
+  dynamicIsland.style.height = '';
+  cancelAnimationFrame(islandPreviewFrame);
+  renderIslandPreview();
+}
+
+function closeIslandPreview() {
+  dynamicIsland.classList.remove('expanded', 'dragging');
+  stage.classList.remove('island-open');
+  dynamicIsland.style.width = '';
+  dynamicIsland.style.height = '';
+  cancelAnimationFrame(islandPreviewFrame);
+}
+
+function beginIslandDrag(event) {
+  if (developing || dynamicIsland.classList.contains('working')) return;
+  islandPointerId = event.pointerId;
+  islandStartY = event.clientY;
+  islandDragDistance = 0;
+  islandWasExpanded = dynamicIsland.classList.contains('expanded');
+  dynamicIsland.classList.add('dragging');
+  event.stopPropagation();
+}
+
+function moveIslandDrag(event) {
+  if (event.pointerId !== islandPointerId) return;
+  islandDragDistance = event.clientY - islandStartY;
+  if (islandWasExpanded) return;
+  const progress = Math.max(0, Math.min(1, islandDragDistance / 115));
+  const targetWidth = Math.min(330, window.innerWidth - 36);
+  dynamicIsland.style.width = `${118 + (targetWidth - 118) * progress}px`;
+  dynamicIsland.style.height = `${34 + 154 * progress}px`;
+  dynamicIsland.style.borderRadius = `${24 + 5 * progress}px`;
+  if (progress > .18) dynamicIsland.classList.add('expanded');
+  event.preventDefault();
+}
+
+function endIslandDrag(event) {
+  if (event.pointerId !== islandPointerId) return;
+  islandDragDistance = event.clientY - islandStartY;
+  if (islandWasExpanded && islandDragDistance < -34) closeIslandPreview();
+  else if (!islandWasExpanded && islandDragDistance > 42) openIslandPreview();
+  else if (islandWasExpanded) openIslandPreview();
+  else closeIslandPreview();
+  islandPointerId = null;
 }
 
 function updateRecommendation(film) {
@@ -210,9 +308,14 @@ function captureFrame() {
   captureCanvas.width = width;
   captureCanvas.height = height;
   const ctx = captureCanvas.getContext('2d', { willReadFrequently: true });
+  ctx.save();
+  ctx.translate(width / 2, height / 2);
+  ctx.scale(currentZoom, currentZoom);
+  ctx.translate(-width / 2, -height / 2);
   if (uploadedImage) drawCover(ctx, uploadedImage, uploadedImage.naturalWidth, uploadedImage.naturalHeight, width, height);
   else if (stream && video.videoWidth) drawCover(ctx, video, video.videoWidth, video.videoHeight, width, height, facingMode === 'user');
   else drawDemo(ctx, width, height);
+  ctx.restore();
   if (exposure !== 0) {
     ctx.globalCompositeOperation = exposure > 0 ? 'screen' : 'multiply';
     ctx.fillStyle = exposure > 0 ? `rgba(255,255,255,${exposure})` : `rgba(30,24,18,${Math.abs(exposure)})`;
@@ -224,18 +327,24 @@ function captureFrame() {
 
 function takePhoto() {
   if (developing) return;
+  closeIslandPreview();
+  dynamicIsland.classList.remove('working');
+  dynamicIsland.classList.add('collapse-capture');
   shutterFlash.classList.remove('fire'); void shutterFlash.offsetWidth; shutterFlash.classList.add('fire');
   currentImage = captureFrame();
   currentCaption = captions[Math.floor(Math.random() * captions.length)];
   tinyPhoto.style.backgroundImage = `url(${currentImage})`;
   developIslandThumb.style.backgroundImage = `url(${currentImage})`;
-  dynamicIsland.classList.add('working');
   islandTitle.textContent = '正在感光';
   islandMeta.textContent = `${films[currentFilm].code} · ${String(gallery.length + 1).padStart(2,'0')}`;
   developIslandTitle.textContent = '正在显影';
   developIslandMeta.textContent = `${films[currentFilm].code} · ${String(gallery.length + 1).padStart(2,'0')}`;
   if (navigator.vibrate) navigator.vibrate(35);
-  setTimeout(beginDevelopment, 650);
+  setTimeout(() => {
+    dynamicIsland.classList.remove('collapse-capture');
+    dynamicIsland.classList.add('working');
+  }, 360);
+  setTimeout(beginDevelopment, 920);
 }
 
 function beginDevelopment() {
@@ -299,7 +408,7 @@ function resetDevelopment() {
   cancelAnimationFrame(developFrame);
   developmentLayer.classList.remove('active');
   developmentLayer.setAttribute('aria-hidden','true');
-  dynamicIsland.classList.remove('working');
+  dynamicIsland.classList.remove('working', 'collapse-capture');
   developingPhoto.style.transform = '';
   developActions.classList.remove('ready');
 }
@@ -387,9 +496,21 @@ async function flipCamera() {
 }
 
 document.querySelectorAll('.film-chip').forEach((chip) => chip.addEventListener('click', () => selectFilm(chip.dataset.film)));
+document.querySelectorAll('[data-focal]').forEach((button) => button.addEventListener('click', () => setFocal(button.dataset.focal)));
 document.querySelector('#applyRecommendation').addEventListener('click', (event) => selectFilm(event.currentTarget.dataset.recommendedFilm || 'sunset'));
 document.querySelector('#shutterButton').addEventListener('click', takePhoto);
 stage.addEventListener('pointerdown', focusAt);
+dynamicIsland.addEventListener('pointerdown', beginIslandDrag);
+window.addEventListener('pointermove', moveIslandDrag, { passive: false });
+window.addEventListener('pointerup', endIslandDrag);
+window.addEventListener('pointercancel', endIslandDrag);
+dynamicIsland.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    dynamicIsland.classList.contains('expanded') ? closeIslandPreview() : openIslandPreview();
+  }
+  if (event.key === 'ArrowUp' || event.key === 'Escape') closeIslandPreview();
+});
 uploadInput.addEventListener('change', () => handleUpload(uploadInput.files[0]));
 
 developingPhoto.addEventListener('pointerdown', (event) => { rubbing = true; developingPhoto.setPointerCapture?.(event.pointerId); });
@@ -417,6 +538,7 @@ document.querySelectorAll('[data-action]').forEach((button) => button.addEventLi
     exposure = exposure === 0 ? .16 : exposure > 0 ? -.14 : 0;
     document.querySelector('.exposure-meter b').textContent = exposure > 0 ? '+0.7' : exposure < 0 ? '-0.7' : '0';
     previewCanvas.style.filter = filterCss(currentFilm);
+    islandPreviewCanvas.style.filter = filterCss(currentFilm);
   }
   if (action === 'clear-gallery' && gallery.length && window.confirm('确定清空显影簿吗？照片删除后无法恢复。')) { gallery=[];persistGallery();renderGallery(); }
 }));

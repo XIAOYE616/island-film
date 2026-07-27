@@ -1,5 +1,5 @@
-const CACHE = 'island-film-v5';
-const ASSETS = ['./','./index.html','./styles.css','./develop-island.css','./app.js?v=5','./manifest.webmanifest','./icon.svg'];
+const CACHE = 'island-film-v12';
+const ASSETS = ['./','./index.html','./styles.css','./develop-island.css','./camera-enhancements.css?v=12','./app.js?v=12','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install', (event) => event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS))));
 self.addEventListener('activate', (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))));

@@ -10,6 +10,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="develop-island.css" />
+    <link rel="stylesheet" href="camera-enhancements.css?v=12" />
   </head>
   <body>
     <main class="camera-app" id="cameraApp">
@@ -33,12 +34,18 @@
             <span><strong>等光来</strong><small>WAIT FOR LIGHT</small></span>
           </button>
 
-          <div class="dynamic-island" id="dynamicIsland" role="status" aria-live="polite">
+          <div class="dynamic-island" id="dynamicIsland" role="status" aria-live="polite" tabindex="0" aria-label="下滑展开取景预览">
             <div class="island-idle"><span class="island-sensor"></span><span class="island-lens"></span></div>
             <div class="island-working">
               <span class="tiny-photo" id="tinyPhoto"></span>
               <span class="island-copy"><strong id="islandTitle">正在感光</strong><small id="islandMeta">FUJI 400H · 01</small></span>
               <span class="island-wave"><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="island-preview" id="islandPreview">
+              <canvas id="islandPreviewCanvas" aria-label="灵动岛实时取景"></canvas>
+              <div class="island-preview-shade"></div>
+              <div class="island-preview-meta"><span id="islandPreviewFilm">暖日 200</span><strong id="islandPreviewFocal">1×</strong></div>
+              <span class="island-preview-handle"></span>
             </div>
           </div>
 
@@ -58,6 +65,13 @@
           <span id="cameraStatus">演示样片</span>
           <span class="exposure-meter"><i></i><b>0</b><i></i></span>
           <span id="photoCounter">01 / 12</span>
+        </div>
+
+        <div class="focal-switch" role="group" aria-label="固定焦段">
+          <button type="button" data-focal="0.5">0.5×</button>
+          <button class="active" type="button" data-focal="1">1×</button>
+          <button type="button" data-focal="2">2×</button>
+          <button type="button" data-focal="3">3×</button>
         </div>
 
         <section class="film-dock" aria-label="胶片选择">
@@ -135,6 +149,6 @@
       <canvas id="captureCanvas" aria-hidden="true"></canvas>
       <canvas id="exportCanvas" aria-hidden="true"></canvas>
     </main>
-    <script src="app.js?v=5"></script>
+    <script src="app.js?v=12"></script>
   </body>
 </html>

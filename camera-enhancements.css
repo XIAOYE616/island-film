@@ -1,0 +1,199 @@
+.camera-stage {
+  --zoom-scale: 1.15;
+}
+
+.camera-stage video,
+.camera-stage #previewCanvas,
+.camera-stage .demo-scene {
+  transform: scale(var(--zoom-scale));
+  transform-origin: center 44%;
+  transition: transform 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.camera-stage video {
+  transform: scaleX(-1) scale(var(--zoom-scale));
+}
+
+.camera-stage.environment video {
+  transform: scale(var(--zoom-scale));
+}
+
+.dynamic-island {
+  position: relative;
+  touch-action: none;
+  user-select: none;
+  will-change: width, height, border-radius;
+}
+
+.dynamic-island:focus {
+  outline: none;
+}
+
+.dynamic-island:focus-visible {
+  box-shadow: 0 0 0 2px rgba(217,255,97,.86), 0 8px 25px rgba(0,0,0,.28);
+}
+
+.dynamic-island.dragging {
+  transition: none;
+}
+
+.island-preview {
+  position: absolute;
+  inset: 6px;
+  display: none;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #12140f;
+}
+
+.dynamic-island.expanded {
+  width: min(330px, calc(100vw - 36px));
+  height: 188px;
+  border-radius: 29px;
+}
+
+.dynamic-island.expanded .island-idle,
+.dynamic-island.expanded .island-working {
+  display: none;
+}
+
+.dynamic-island.expanded .island-preview {
+  display: block;
+  animation: islandPreviewIn 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#islandPreviewCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: sepia(.22) saturate(1.18) contrast(1.06) brightness(1.02);
+}
+
+.island-preview-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.16), transparent 42%, rgba(0,0,0,.4));
+  pointer-events: none;
+}
+
+.island-preview-meta {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  font-size: 9px;
+  text-shadow: 0 1px 5px #000;
+}
+
+.island-preview-meta span {
+  padding: 4px 6px;
+  border-radius: 5px;
+  background: rgba(0,0,0,.44);
+  backdrop-filter: blur(8px);
+}
+
+.island-preview-meta strong {
+  font-size: 12px;
+}
+
+.island-preview-handle {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 31px;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255,255,255,.54);
+  transform: translateX(-50%);
+}
+
+.focal-switch {
+  position: absolute;
+  z-index: 13;
+  left: 50%;
+  top: 190px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 22px;
+  background: rgba(7,8,6,.45);
+  backdrop-filter: blur(11px);
+  transition: opacity .24s, transform .4s cubic-bezier(.16,1,.3,1);
+}
+
+.camera-stage.island-open .focal-switch {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(20px);
+}
+
+.camera-stage.island-open .scene-reading,
+.camera-stage.island-open .camera-status {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+
+.camera-stage.island-open .scene-reading {
+  animation: none;
+  opacity: 0 !important;
+}
+
+.camera-stage.island-open .brand-button,
+.camera-stage.island-open .header-actions {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s;
+}
+
+.focal-switch button {
+  width: 36px;
+  height: 30px;
+  padding: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: rgba(255,255,255,.64);
+  font-size: 9px;
+  transition: color .3s, background .3s, transform .55s cubic-bezier(.16,1,.3,1);
+}
+
+.focal-switch button.active {
+  background: #f3efe5;
+  color: #171913;
+  font-weight: 700;
+  transform: scale(1.06);
+}
+
+.dynamic-island.collapse-capture {
+  width: 118px;
+  height: 34px;
+  border-radius: 24px;
+}
+
+.development-layer.active .polaroid {
+  animation-delay: 450ms;
+}
+
+@keyframes islandPreviewIn {
+  from { opacity: 0; transform: scale(.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-height: 720px) {
+  .focal-switch { top: 172px; }
+  .dynamic-island.expanded { height: 162px; }
+}
+
+@media (max-width: 370px) {
+  .dynamic-island.expanded { width: calc(100vw - 28px); }
+  .focal-switch button { width: 32px; }
+}
