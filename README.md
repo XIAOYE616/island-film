@@ -1,11 +1,11 @@
-# 岛片 Island Film
+# 等光来 Wait for Light
 
 一台会从灵动岛吐出相纸的数字拍立得。它让每张数字照片重新经历一次等待显影的浪漫。
 
 - 在线体验：https://xiaoye616.github.io/island-film/
 - 源代码：https://github.com/XIAOYE616/island-film
 
-![岛片显影界面](./preview.png)
+![等光来显影界面](./preview.png)
 
 ## 核心体验
 

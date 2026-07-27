@@ -323,13 +323,13 @@ function renderGallery() {
   galleryCount.textContent = gallery.length;
   galleryThumb.style.backgroundImage = gallery[0] ? `url(${gallery[0].image})` : '';
   if (!gallery.length) {
-    galleryStack.innerHTML = '<div class="empty-gallery"><span>◇</span><strong>第一张岛片，还在等你</strong><small>回到相机按下快门，它会从灵动岛慢慢出现。</small></div>';
+    galleryStack.innerHTML = '<div class="empty-gallery"><span>◇</span><strong>第一张相纸，还在等你</strong><small>回到相机按下快门，它会从灵动岛慢慢出现。</small></div>';
     return;
   }
   galleryStack.innerHTML = gallery.map((photo,index) => {
     const date = new Intl.DateTimeFormat('zh-CN',{month:'2-digit',day:'2-digit'}).format(new Date(photo.date));
     const angle = index % 2 === 0 ? '-1.2deg' : '1.4deg';
-    return `<article class="gallery-card" style="--angle:${angle}"><img src="${photo.image}" alt="${photo.caption}" /><div><strong>${photo.caption}</strong><small>${date} · ${films[photo.film]?.name || '岛片'}</small></div><button type="button" data-download="${photo.id}">下载这张相纸</button></article>`;
+    return `<article class="gallery-card" style="--angle:${angle}"><img src="${photo.image}" alt="${photo.caption}" /><div><strong>${photo.caption}</strong><small>${date} · ${films[photo.film]?.name || '等光来'}</small></div><button type="button" data-download="${photo.id}">下载这张相纸</button></article>`;
   }).join('');
 }
 
@@ -348,8 +348,8 @@ function exportPolaroid(photo) {
     ctx.clearRect(0,0,width,height); ctx.fillStyle='#fffaf0';ctx.fillRect(0,0,width,height);ctx.putImageData(snapshot,pad,pad);
     ctx.fillStyle='#24231e';ctx.font='38px serif';ctx.fillText(photo.caption,pad,height-170);
     ctx.fillStyle='#777267';ctx.font='20px sans-serif';ctx.fillText(new Date(photo.date).toLocaleDateString('zh-CN'),pad,height-115);
-    ctx.textAlign='right';ctx.fillText(films[photo.film]?.name || '岛片',width-pad,height-115);
-    const link=document.createElement('a');link.download=`岛片-${photo.id}.jpg`;link.href=exportCanvas.toDataURL('image/jpeg',.94);link.click();
+    ctx.textAlign='right';ctx.fillText(films[photo.film]?.name || '等光来',width-pad,height-115);
+    const link=document.createElement('a');link.download=`等光来-${photo.id}.jpg`;link.href=exportCanvas.toDataURL('image/jpeg',.94);link.click();
   };
   image.src=photo.image;
 }
@@ -418,7 +418,7 @@ document.querySelectorAll('[data-action]').forEach((button) => button.addEventLi
     document.querySelector('.exposure-meter b').textContent = exposure > 0 ? '+0.7' : exposure < 0 ? '-0.7' : '0';
     previewCanvas.style.filter = filterCss(currentFilm);
   }
-  if (action === 'clear-gallery' && gallery.length && window.confirm('确定清空岛片相册吗？照片删除后无法恢复。')) { gallery=[];persistGallery();renderGallery(); }
+  if (action === 'clear-gallery' && gallery.length && window.confirm('确定清空显影簿吗？照片删除后无法恢复。')) { gallery=[];persistGallery();renderGallery(); }
 }));
 
 sheetBackdrop.addEventListener('click', closePermission);

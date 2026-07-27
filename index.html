@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#11120f" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>岛片 Island Film</title>
+    <title>等光来 Wait for Light</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="develop-island.css" />
@@ -28,9 +28,9 @@
         <div class="shutter-flash" id="shutterFlash"></div>
 
         <header class="camera-header">
-          <button class="plain-action brand-button" type="button" data-action="about" aria-label="关于岛片">
+          <button class="plain-action brand-button" type="button" data-action="about" aria-label="关于等光来">
             <span class="brand-dot"></span>
-            <span><strong>岛片</strong><small>ISLAND FILM</small></span>
+            <span><strong>等光来</strong><small>WAIT FOR LIGHT</small></span>
           </button>
 
           <div class="dynamic-island" id="dynamicIsland" role="status" aria-live="polite">
@@ -114,19 +114,19 @@
       </section>
 
       <section class="gallery-layer" id="galleryLayer" aria-hidden="true">
-        <header class="layer-header"><button type="button" data-action="close-gallery">←</button><div><strong>岛片相册</strong><small>每一张都经过等待</small></div><button type="button" data-action="clear-gallery">整理</button></header>
-        <div class="gallery-stack" id="galleryStack"><div class="empty-gallery"><span>◇</span><strong>第一张岛片，还在等你</strong><small>回到相机按下快门，它会从灵动岛慢慢出现。</small></div></div>
+        <header class="layer-header"><button type="button" data-action="close-gallery">←</button><div><strong>显影簿</strong><small>每一张都经过等待</small></div><button type="button" data-action="clear-gallery">整理</button></header>
+        <div class="gallery-stack" id="galleryStack"><div class="empty-gallery"><span>◇</span><strong>第一张相纸，还在等你</strong><small>回到相机按下快门，它会从灵动岛慢慢出现。</small></div></div>
       </section>
 
       <section class="about-layer" id="aboutLayer" aria-hidden="true">
         <button class="about-close" type="button" data-action="close-about">×</button>
-        <div class="about-copy"><span class="about-mark">岛片</span><p class="eyebrow">A SLOW CAMERA FOR FAST DAYS</p><h1>让数字照片，<br />重新经历等待。</h1><p>六种原创胶片、真实显影过程，以及从灵动岛吐出的一张相纸。拍下此刻，先别急着看答案。</p><button type="button" data-action="close-about">回到取景器</button></div>
+        <div class="about-copy"><span class="about-mark">等光</span><p class="eyebrow">A SLOW CAMERA FOR FAST DAYS</p><h1>让数字照片，<br />重新经历等待。</h1><p>六种原创胶片、真实显影过程，以及从灵动岛吐出的一张相纸。拍下此刻，等光把答案慢慢写出来。</p><button type="button" data-action="close-about">回到取景器</button></div>
       </section>
 
       <div class="permission-sheet" id="permissionSheet">
         <div class="sheet-handle"></div>
         <span class="sheet-icon">◉</span>
-        <h2>把此刻交给岛片</h2>
+        <h2>把此刻交给光</h2>
         <p>开启相机后，照片只在你的设备上处理。你也可以先用演示样片体验完整显影过程。</p>
         <button class="sheet-primary" type="button" data-action="enable-camera">开启相机</button>
         <button class="sheet-secondary" type="button" data-action="demo">先看演示</button>
@@ -135,6 +135,6 @@
       <canvas id="captureCanvas" aria-hidden="true"></canvas>
       <canvas id="exportCanvas" aria-hidden="true"></canvas>
     </main>
-    <script src="app.js?v=4"></script>
+    <script src="app.js?v=5"></script>
   </body>
 </html>
