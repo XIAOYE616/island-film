@@ -10,7 +10,7 @@ Web/H5
 
 ## 作品公网访问链接
 
-https://xiaoye616.github.io/island-film/
+https://xiaoye616.github.io/island-film/?v=14
 
 ## 作品源代码或演示材料链接
 
