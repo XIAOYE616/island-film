@@ -547,4 +547,14 @@ sheetBackdrop.addEventListener('click', closePermission);
 document.addEventListener('visibilitychange', () => { if (document.hidden && stream) stopCamera(); });
 window.addEventListener('beforeunload', stopCamera);
 
-if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(() => {});
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    location.reload();
+  });
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+    .then((registration) => registration.update())
+    .catch(() => {});
+}
