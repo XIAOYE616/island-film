@@ -1,11 +1,11 @@
-const CACHE = 'island-film-v13';
+const CACHE = 'island-film-v14';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css?v=13',
-  './develop-island.css?v=13',
-  './camera-enhancements.css?v=13',
-  './app.js?v=13',
+  './styles.css?v=14',
+  './develop-island.css?v=14',
+  './camera-enhancements.css?v=14',
+  './app.js?v=14',
   './manifest.webmanifest',
   './icon.svg',
 ];
