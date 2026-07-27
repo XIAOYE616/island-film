@@ -1,0 +1,12 @@
+{
+  "name": "岛片 Island Film",
+  "short_name": "岛片",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#11120f",
+  "theme_color": "#11120f",
+  "description": "一台会从灵动岛吐出相纸的数字拍立得。",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

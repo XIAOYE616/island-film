@@ -1,0 +1,49 @@
+.develop-island {
+  position: absolute;
+  z-index: 8;
+  top: var(--safe-top);
+  width: 238px;
+  height: 52px;
+  border-radius: 27px;
+  background: #050604;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 11px;
+  box-shadow: 0 9px 28px rgba(0, 0, 0, 0.5);
+}
+
+.develop-island-thumb {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 8px;
+  background-position: center;
+  background-size: cover;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.develop-island-copy {
+  min-width: 112px;
+}
+
+.develop-island-copy strong,
+.develop-island-copy small {
+  display: block;
+  white-space: nowrap;
+}
+
+.develop-island-copy strong {
+  font-size: 10px;
+}
+
+.develop-island-copy small {
+  color: #92978f;
+  font-size: 8px;
+  margin-top: 3px;
+}
+
+.development-layer .eject-slot {
+  z-index: 7;
+}

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#11120f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>岛片 Island Film</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="develop-island.css" />
+  </head>
+  <body>
+    <main class="camera-app" id="cameraApp">
+      <section class="camera-stage" aria-label="相机取景器">
+        <video id="cameraFeed" playsinline muted autoplay></video>
+        <canvas id="previewCanvas" aria-hidden="true"></canvas>
+        <div class="demo-scene" id="demoScene" aria-hidden="true">
+          <div class="demo-sky"></div>
+          <div class="demo-sun"></div>
+          <div class="demo-buildings"><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="demo-reflection"></div>
+        </div>
+        <div class="camera-vignette"></div>
+        <div class="focus-reticle" id="focusReticle"><i></i><i></i><i></i><i></i></div>
+        <div class="film-grain" aria-hidden="true"></div>
+        <div class="shutter-flash" id="shutterFlash"></div>
+
+        <header class="camera-header">
+          <button class="plain-action brand-button" type="button" data-action="about" aria-label="关于岛片">
+            <span class="brand-dot"></span>
+            <span><strong>岛片</strong><small>ISLAND FILM</small></span>
+          </button>
+
+          <div class="dynamic-island" id="dynamicIsland" role="status" aria-live="polite">
+            <div class="island-idle"><span class="island-sensor"></span><span class="island-lens"></span></div>
+            <div class="island-working">
+              <span class="tiny-photo" id="tinyPhoto"></span>
+              <span class="island-copy"><strong id="islandTitle">正在感光</strong><small id="islandMeta">FUJI 400H · 01</small></span>
+              <span class="island-wave"><i></i><i></i><i></i><i></i></span>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <button class="round-action" type="button" data-action="flip" aria-label="切换摄像头">↻</button>
+            <button class="round-action gallery-button" type="button" data-action="gallery" aria-label="打开相册"><span id="galleryThumb"></span><b id="galleryCount">0</b></button>
+          </div>
+        </header>
+
+        <div class="scene-reading" id="sceneReading">
+          <span class="reading-icon">✦</span>
+          <span><small>智能测光</small><strong id="recommendation">柔和暮色，推荐暖日 200</strong></span>
+          <button type="button" id="applyRecommendation">使用</button>
+        </div>
+
+        <div class="camera-status">
+          <span id="cameraStatus">演示样片</span>
+          <span class="exposure-meter"><i></i><b>0</b><i></i></span>
+          <span id="photoCounter">01 / 12</span>
+        </div>
+
+        <section class="film-dock" aria-label="胶片选择">
+          <div class="film-strip" id="filmStrip">
+            <button class="film-chip" type="button" data-film="mono"><span class="film-swatch mono"></span><span><strong>银盐 100</strong><small>MONO</small></span></button>
+            <button class="film-chip" type="button" data-film="harbor"><span class="film-swatch harbor"></span><span><strong>港夜 800</strong><small>CINEMA</small></span></button>
+            <button class="film-chip active" type="button" data-film="sunset"><span class="film-swatch sunset"></span><span><strong>暖日 200</strong><small>GOLDEN</small></span></button>
+            <button class="film-chip" type="button" data-film="fuji"><span class="film-swatch fuji"></span><span><strong>青野 400</strong><small>SOFT</small></span></button>
+            <button class="film-chip" type="button" data-film="expired"><span class="film-swatch expired"></span><span><strong>过期 98</strong><small>DREAM</small></span></button>
+            <button class="film-chip" type="button" data-film="daily"><span class="film-swatch daily"></span><span><strong>日常 160</strong><small>CLEAN</small></span></button>
+          </div>
+        </section>
+
+        <footer class="camera-controls">
+          <label class="control-side upload-button" aria-label="从相册选择照片">
+            <input id="photoUpload" type="file" accept="image/*" />
+            <span class="mini-icon">▧</span>
+            <small>相册</small>
+          </label>
+          <button class="shutter-button" id="shutterButton" type="button" aria-label="拍摄照片"><span></span></button>
+          <button class="control-side" type="button" data-action="exposure" aria-label="调整曝光"><span class="mini-icon">±</span><small>曝光</small></button>
+        </footer>
+
+        <p class="camera-hint" id="cameraHint">点击画面重新对焦</p>
+      </section>
+
+      <section class="development-layer" id="developmentLayer" aria-hidden="true">
+        <div class="darkroom-haze"></div>
+        <div class="develop-island">
+          <span class="develop-island-thumb" id="developIslandThumb"></span>
+          <span class="develop-island-copy"><strong id="developIslandTitle">正在显影</strong><small id="developIslandMeta">暖日 200 · 01</small></span>
+          <span class="island-wave"><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="eject-slot" id="ejectSlot"></div>
+        <article class="polaroid" id="developingPhoto">
+          <div class="photo-surface">
+            <img id="developingImage" alt="正在显影的照片" />
+            <div class="chemical-clouds"><i></i><i></i><i></i></div>
+            <div class="photo-grain"></div>
+          </div>
+          <div class="photo-footer">
+            <div><strong id="photoCaption">光落下来的时候</strong><small id="photoDate">JUL 27, 2026</small></div>
+            <span id="filmStamp">暖日 200</span>
+          </div>
+        </article>
+        <div class="develop-guide" id="developGuide">
+          <span class="progress-ring"><i id="developProgress"></i></span>
+          <div><strong id="developLabel">正在显影 · 0%</strong><small>轻轻摩擦相纸，让画面更快出现</small></div>
+        </div>
+        <div class="develop-actions" id="developActions">
+          <button type="button" data-action="retake">重拍</button>
+          <button class="save-action" type="button" data-action="save">收进相册</button>
+        </div>
+      </section>
+
+      <section class="gallery-layer" id="galleryLayer" aria-hidden="true">
+        <header class="layer-header"><button type="button" data-action="close-gallery">←</button><div><strong>岛片相册</strong><small>每一张都经过等待</small></div><button type="button" data-action="clear-gallery">整理</button></header>
+        <div class="gallery-stack" id="galleryStack"><div class="empty-gallery"><span>◇</span><strong>第一张岛片，还在等你</strong><small>回到相机按下快门，它会从灵动岛慢慢出现。</small></div></div>
+      </section>
+
+      <section class="about-layer" id="aboutLayer" aria-hidden="true">
+        <button class="about-close" type="button" data-action="close-about">×</button>
+        <div class="about-copy"><span class="about-mark">岛片</span><p class="eyebrow">A SLOW CAMERA FOR FAST DAYS</p><h1>让数字照片，<br />重新经历等待。</h1><p>六种原创胶片、真实显影过程，以及从灵动岛吐出的一张相纸。拍下此刻，先别急着看答案。</p><button type="button" data-action="close-about">回到取景器</button></div>
+      </section>
+
+      <div class="permission-sheet" id="permissionSheet">
+        <div class="sheet-handle"></div>
+        <span class="sheet-icon">◉</span>
+        <h2>把此刻交给岛片</h2>
+        <p>开启相机后，照片只在你的设备上处理。你也可以先用演示样片体验完整显影过程。</p>
+        <button class="sheet-primary" type="button" data-action="enable-camera">开启相机</button>
+        <button class="sheet-secondary" type="button" data-action="demo">先看演示</button>
+      </div>
+      <div class="sheet-backdrop" id="sheetBackdrop"></div>
+      <canvas id="captureCanvas" aria-hidden="true"></canvas>
+      <canvas id="exportCanvas" aria-hidden="true"></canvas>
+    </main>
+    <script src="app.js?v=4"></script>
+  </body>
+</html>
